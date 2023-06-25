@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.DeptMapper">
+    <!--查询所有-->
+    <select id="getAllDept" resultMap="baseMap">
+        select *
+        from Dept
+    </select>
+
+    <!--根据name查询-->
+    <select id="getDeptByName" parameterType="String" resultMap="baseMap">
+        select *
+        from Dept
+        where d_name = #{name}
+    </select>
+
+    <!--根据id查询-->
+    <select id="getDeptById" parameterType="int" resultMap="baseMap">
+        select *
+        from Dept
+        where d_id = #{id}
+    </select>
+
+    <!--添加-->
+    <insert id="addDept" parameterType="Dept">
+        insert into Dept
+        values (#{id}, #{name})
+    </insert>
+
+    <!--删除-->
+    <delete id="delDept" parameterType="int">
+        delete from Dept
+        where d_id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateDept" parameterType="Dept">
+        update Dept
+        set d_name = #{name}
+        where d_id = #{id}
+    </update>
+
+    <resultMap id="baseMap" type="Dept">
+        <result property="id" column="d_id"/>
+        <result property="name" column="d_name"/>
+    </resultMap>
+</mapper>

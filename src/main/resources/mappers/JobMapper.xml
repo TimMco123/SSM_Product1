@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.JobMapper">
+    <!--查询所有-->
+    <select id="getAllJob" resultMap="JobWithLevel">
+        SELECT j.*,
+               jl.*
+        FROM Job AS j
+                 LEFT JOIN
+             Job_level AS jl
+             ON
+                 j.j_level = jl.jl_id
+    </select>
+
+    <!--根据id查询-->
+    <select id="getJobById" parameterType="int" resultMap="baseMap">
+        select *
+        from Job
+        where j_id = #{id}
+    </select>
+
+    <!--根据userid查询，并返回List-->
+    <select id="getJobById1" parameterType="int" resultMap="JobWithUser">
+        SELECT j.*,
+               jl.*,
+               u.u_id
+        FROM Job AS j
+                 LEFT JOIN
+             Job_level AS jl
+             ON
+                 j.j_level = jl.jl_id
+                 LEFT JOIN
+             `User` AS u
+             ON
+                 j.j_id = u.job_id
+        where u.u_id = #{id}
+    </select>
+
+    <!--根据name查询-->
+    <select id="getJobByName" parameterType="String" resultMap="baseMap">
+        select *
+        from Job
+        where j_name = #{name}
+    </select>
+
+    <!--添加-->
+    <insert id="addJob" parameterType="Job">
+        insert into Job
+        values (#{id}, #{name}, #{salary}, #{level})
+    </insert>
+
+    <!--删除-->
+    <delete id="delJob" parameterType="int">
+        delete
+        from Job
+        where j_id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateJob" parameterType="Job">
+        update Job
+        set j_name   = #{name},
+            j_salary = #{salary},
+            j_level  = #{level}
+        where j_id = #{id}
+    </update>
+
+    <resultMap id="baseMap" type="Job">
+        <result property="id" column="j_id"/>
+        <result property="name" column="j_name"/>
+        <result property="salary" column="j_salary"/>
+        <result property="level" column="j_level"/>
+    </resultMap>
+
+    <resultMap id="JobWithLevel" type="Job" extends="baseMap">
+        <association property="job_level" javaType="Job_level">
+            <result property="id" column="jl_id"/>
+            <result property="name" column="jl_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="JobWithUser" type="Job" extends="JobWithLevel">
+        <collection property="user" ofType="User">
+            <result property="id" column="u_id"/>
+        </collection>
+    </resultMap>
+</mapper>

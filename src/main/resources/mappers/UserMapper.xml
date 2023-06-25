@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.UserMapper">
+    <!--登录-->
+    <select id="login" parameterType="User" resultMap="baseMap">
+        select *
+        from User
+        where u_username = #{username}
+          and u_password = #{password}
+          and role_id = #{role_id}
+    </select>
+
+    <!--查询所有-->
+    <select id="getAllUser" resultMap="getAllUser">
+        <include refid="AllUser"/>
+    </select>
+
+    <!--查询User表中所有，单表-->
+    <select id="getAllUser1" resultMap="baseMap">
+        select *
+        from User
+    </select>
+
+    <!--查询用户名返回id-->
+    <select id="getUsernameReturnId" parameterType="String" resultType="int">
+        select u_id
+        from User
+        where u_username = #{username}
+    </select>
+
+    <!--根据用户名查询用户-->
+    <select id="getUserByUsername" parameterType="String" resultMap="baseMap">
+        select *
+        from User
+        where u_username = #{username}
+    </select>
+
+    <!--根据id查询用户，单表-->
+    <select id="getUserById" parameterType="int" resultMap="baseMap">
+        select *
+        from User
+        where u_id = #{id}
+    </select>
+
+    <!--根据id查询用户，多表-->
+    <select id="getUserById1" parameterType="int" resultMap="getAllUser">
+        <include refid="AllUser"/>
+        where u_id = #{id}
+    </select>
+
+    <!--根据部门号dept_id查询-->
+    <select id="getUserByDeptId" parameterType="int" resultMap="getAllUser">
+        <include refid="AllUser"/>
+        WHERE u.dept_id = #{id}
+    </select>
+
+    <!--增加-->
+    <insert id="addUser" parameterType="User">
+        insert into User
+        values (#{id}, #{username}, #{password}, #{age}, #{time}, #{dept_id}, #{job_id}, #{role_id})
+    </insert>
+
+    <!--删除-->
+    <delete id="delUser" parameterType="Integer">
+        delete
+        from User
+        where u_id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateUser" parameterType="User">
+        update User
+        set u_username = #{username},
+            u_password = #{password},
+            u_age      = #{age},
+            u_time     = #{time},
+            dept_id    = #{dept_id},
+            job_id     = #{job_id},
+            role_id    = #{role_id}
+        where u_id = #{id}
+    </update>
+
+    <!--左连接select*-->
+    <sql id="AllUser">
+        SELECT u.*,
+               d.*,
+               j.*,
+               r.*,
+               jl.*
+        FROM `User` AS u
+                 LEFT JOIN
+             Dept AS d
+             ON
+                 u.dept_id = d.d_id
+                 LEFT JOIN
+             Job AS j
+             ON
+                 u.job_id = j.j_id
+                 LEFT JOIN
+             Role AS r
+             ON
+                 u.role_id = r.r_id
+                 LEFT JOIN
+             Job_level AS jl
+             ON
+                 j.j_level = jl.jl_id
+    </sql>
+
+    <resultMap id="baseMap" type="User">
+        <id property="id" column="u_id"/>
+        <result property="username" column="u_username"/>
+        <result property="password" column="u_password"/>
+        <result property="age" column="u_age"/>
+        <result property="time" column="u_time"/>
+        <result property="dept_id" column="dept_id"/>
+        <result property="job_id" column="job_id"/>
+        <result property="role_id" column="role_id"/>
+    </resultMap>
+
+    <!--查询所有-->
+    <resultMap id="getAllUser" type="User" extends="baseMap">
+        <association property="dept" javaType="Dept">
+            <result property="id" column="d_id"/>
+            <result property="name" column="d_name"/>
+        </association>
+        <association property="job" javaType="Job">
+            <result property="id" column="j_id"/>
+            <result property="name" column="j_name"/>
+            <result property="salary" column="j_salary"/>
+            <result property="level" column="j_level"/>
+            <association property="job_level" javaType="Job_level">
+                <result property="id" column="jl_id"/>
+                <result property="name" column="jl_name"/>
+            </association>
+        </association>
+        <association property="role" javaType="Role">
+            <result property="id" column="r_id"/>
+            <result property="name" column="r_name"/>
+        </association>
+    </resultMap>
+</mapper>

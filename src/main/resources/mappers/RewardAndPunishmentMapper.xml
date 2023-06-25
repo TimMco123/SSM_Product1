@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.RewardAndPunishmentMapper">
+    <!--查询所有-->
+    <select id="getAllRP" resultMap="getAllRPWithTypeAndUsername">
+        select rp.*, u.u_username, rpt.rpt_name
+        from RewardAndPunishment rp
+                 left join User u on rp.user_id = u.u_id
+                 left join RPType rpt on rp.rp_type = rpt.rpt_id;
+    </select>
+
+    <!--根据id查询-->
+    <select id="getRPById" parameterType="int" resultMap="getAllRPWithTypeAndUsername">
+        select rp.*, u.u_username, rpt.rpt_name
+        from RewardAndPunishment rp
+                 left join User u on rp.user_id = u.u_id
+                 left join RPType rpt on rp.rp_type = rpt.rpt_id
+        where rp.rp_id = #{id}
+    </select>
+
+    <!--根据id查询，返回List-->
+    <select id="getRPById1" parameterType="int" resultMap="getAllRPWithTypeAndUsername">
+        select rp.*, u.u_username, rpt.rpt_name
+        from RewardAndPunishment rp
+                 left join User u on rp.user_id = u.u_id
+                 left join RPType rpt on rp.rp_type = rpt.rpt_id
+        where u.u_id = #{id}
+    </select>
+
+    <!--添加-->
+    <insert id="addRP" parameterType="RewardAndPunishment">
+        insert into RewardAndPunishment
+        values (#{id}, #{type}, #{detail}, #{time}, #{user_id})
+    </insert>
+
+    <!--删除-->
+    <delete id="delRP" parameterType="int">
+        delete
+        from RewardAndPunishment
+        where rp_id = #{id}
+    </delete>
+
+    <!--根据用户id删除-->
+    <delete id="delRPByUserId" parameterType="int">
+        delete
+        from RewardAndPunishment
+        where user_id = #{user_id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateRP" parameterType="RewardAndPunishment">
+        update RewardAndPunishment
+        set rp_type   = #{type},
+            rp_detail = #{detail},
+            rp_time   = #{time}
+        where rp_id = #{id}
+    </update>
+
+    <resultMap id="baseMap" type="RewardAndPunishment">
+        <id property="id" column="rp_id"/>
+        <result property="type" column="rp_type"/>
+        <result property="detail" column="rp_detail"/>
+        <result property="time" column="rp_time"/>
+        <result property="user_id" column="user_id"/>
+    </resultMap>
+
+    <resultMap id="getAllRPWithTypeAndUsername" type="RewardAndPunishment" extends="baseMap">
+        <association property="rpType" javaType="RPType">
+            <result property="id" column="rpt_id"/>
+            <result property="name" column="rpt_name"/>
+        </association>
+        <association property="user" javaType="User">
+            <result property="username" column="u_username"/>
+        </association>
+    </resultMap>
+
+</mapper>

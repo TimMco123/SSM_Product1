@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.RPTypeMapper">
+    <!--查询所有-->
+    <select id="getAllRPT" resultMap="baseMap">
+        select *
+        from RPType
+    </select>
+
+    <resultMap id="baseMap" type="RPType">
+        <result property="id" column="rpt_id"/>
+        <result property="name" column="rpt_name"/>
+    </resultMap>
+</mapper>

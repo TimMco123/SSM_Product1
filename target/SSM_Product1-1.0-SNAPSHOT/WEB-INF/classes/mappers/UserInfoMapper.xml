@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.dao.UserInfoMapper">
+    <!--添加-->
+    <insert id="addUserInfo" parameterType="UserInfo">
+        insert into UserInfo
+        values (#{id}, #{telephone}, #{address}, #{education}, #{work})
+    </insert>
+
+    <!--删除-->
+    <delete id="delUserInfo" parameterType="Integer">
+        delete
+        from UserInfo
+        where ui_id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateUserInfo" parameterType="UserInfo">
+        update UserInfo
+        set ui_telephone = #{telephone},
+            ui_address   = #{address},
+            ui_education = #{education},
+            ui_work      = #{work}
+        where ui_id = #{id}
+    </update>
+
+    <!--查询所有-->
+    <select id="getAllUserInfo" resultMap="UserInfoAndUsername">
+        select ui.*, u.u_username
+        from UserInfo ui
+                 left join User u on ui.ui_id = u.u_id
+    </select>
+
+    <!--查询单个-->
+    <select id="getUserInfoById" parameterType="int" resultMap="UserInfoAndUsername">
+        select ui.*, u.u_username
+        from UserInfo ui
+                 left join User u on ui.ui_id = u.u_id
+        where ui.ui_id = #{id}
+    </select>
+
+    <!--根据id查询，返回List-->
+    <select id="getUserInfoById1" parameterType="int" resultMap="UserInfoAndUsername">
+        select ui.*, u.u_username
+        from UserInfo ui
+                 left join User u on ui.ui_id = u.u_id
+        where ui.ui_id = #{id}
+    </select>
+
+    <resultMap id="baseMap" type="UserInfo">
+        <result property="id" column="ui_id"/>
+        <result property="telephone" column="ui_telephone"/>
+        <result property="address" column="ui_address"/>
+        <result property="education" column="ui_education"/>
+        <result property="work" column="ui_work"/>
+    </resultMap>
+
+    <resultMap id="UserInfoAndUsername" type="UserInfo" extends="baseMap">
+        <association property="user" javaType="User">
+            <result property="username" column="u_username"/>
+        </association>
+    </resultMap>
+</mapper>
